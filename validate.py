@@ -128,6 +128,10 @@ parser.add_argument('--valid-labels', default='', type=str, metavar='FILENAME',
 parser.add_argument('--retry', default=False, action='store_true',
                     help='Enable batch size decay & retry for single model validation')
 
+parser.add_argument('--quan-bitwidth', type=int, default=8,
+                    dest='quan_bitwidth', help='')
+parser.add_argument('--quan-reset-weight', default=False, action='store_true',
+                    dest='quan_reset', help='')
 
 def validate(args):
     # might as well try to validate something
@@ -162,7 +166,9 @@ def validate(args):
         num_classes=args.num_classes,
         in_chans=3,
         global_pool=args.gp,
-        scriptable=args.torchscript)
+        scriptable=args.torchscript,
+        quan_bitwidth=args.quan_bitwidth,
+        quan_reset=args.quan_reset)
     if args.num_classes is None:
         assert hasattr(model, 'num_classes'), 'Model must have `num_classes` attr if not set on cmd line/config.'
         args.num_classes = model.num_classes

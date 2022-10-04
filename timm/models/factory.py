@@ -35,6 +35,8 @@ def create_model(
         scriptable=None,
         exportable=None,
         no_jit=None,
+        quan_bitwidth=None,
+        quan_reset=None,
         **kwargs):
     """Create a model
 
@@ -72,5 +74,10 @@ def create_model(
 
     if checkpoint_path:
         load_checkpoint(model, checkpoint_path)
+
+    ### Quantization
+    if (quan_bitwidth or quan_reset) and hasattr(model, '_init_quantization'):
+        assert(quan_bitwidth)
+        model._init_quantization(quan_bitwidth, quan_reset)
 
     return model
