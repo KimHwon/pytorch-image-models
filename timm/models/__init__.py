@@ -48,6 +48,7 @@ from .senet import *
 from .sequencer import *
 from .sknet import *
 from .swin_transformer import *
+from .swin_transformer_quan import *
 from .swin_transformer_v2 import *
 from .swin_transformer_v2_cr import *
 from .tnt import *
