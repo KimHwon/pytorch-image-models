@@ -56,6 +56,11 @@ parser.add_argument('--no-test-pool', dest='no_test_pool', action='store_true',
 parser.add_argument('--topk', default=5, type=int,
                     metavar='N', help='Top-k to output to CSV')
 
+parser.add_argument('--quan-bitwidth', type=int, default=8,
+                    dest='quan_bitwidth', help='')
+parser.add_argument('--quan-reset-weight', default=False, action='store_true',
+                    dest='quan_reset', help='')
+
 
 def main():
     setup_default_logging()
@@ -69,7 +74,9 @@ def main():
         num_classes=args.num_classes,
         in_chans=3,
         pretrained=args.pretrained,
-        checkpoint_path=args.checkpoint)
+        checkpoint_path=args.checkpoint,
+        quan_bitwidth=args.quan_bitwidth,
+        quan_reset=args.quan_reset)
 
     _logger.info('Model %s created, param count: %d' %
                  (args.model, sum([m.numel() for m in model.parameters()])))
