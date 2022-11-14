@@ -4,6 +4,7 @@ Hacked together by / Copyright 2020 Ross Wightman
 """
 import logging
 import logging.handlers
+from pathlib import Path
 
 
 class FormatterNoInfo(logging.Formatter):
@@ -22,6 +23,7 @@ def setup_default_logging(default_level=logging.INFO, log_path=''):
     logging.root.addHandler(console_handler)
     logging.root.setLevel(default_level)
     if log_path:
+        Path(log_path).parent.mkdir(parents=True, exist_ok=True)
         file_handler = logging.handlers.RotatingFileHandler(log_path, maxBytes=(1024 ** 2 * 2), backupCount=3)
         file_formatter = logging.Formatter("%(asctime)s - %(name)20s: [%(levelname)8s] - %(message)s")
         file_handler.setFormatter(file_formatter)
