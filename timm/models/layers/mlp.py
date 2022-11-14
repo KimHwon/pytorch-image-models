@@ -131,17 +131,17 @@ class ConvMlp(nn.Module):
 class QuantizedMlp(nn.Module):
     """ MLP as used in Vision Transformer, MLP-Mixer and related networks
     """
-    def __init__(self, in_features, hidden_features=None, out_features=None, act_layer=nn.GELU, bias=True, drop=0.):
+    def __init__(self, in_features, hidden_features=None, out_features=None, act_layer=nn.GELU, bias=True, drop=0., bypass=False):
         super().__init__()
         out_features = out_features or in_features
         hidden_features = hidden_features or in_features
         bias = to_2tuple(bias)
         drop_probs = to_2tuple(drop)
 
-        self.fc1 = quan_Linear(in_features, hidden_features, bias=bias[0])
+        self.fc1 = quan_Linear(in_features, hidden_features, bias=bias[0], bypass=bypass)
         self.act = act_layer()
         self.drop1 = nn.Dropout(drop_probs[0])
-        self.fc2 = quan_Linear(hidden_features, out_features, bias=bias[1])
+        self.fc2 = quan_Linear(hidden_features, out_features, bias=bias[1], bypass=bypass)
         self.drop2 = nn.Dropout(drop_probs[1])
 
     def forward(self, x):
