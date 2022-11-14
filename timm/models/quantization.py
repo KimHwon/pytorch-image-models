@@ -38,7 +38,8 @@ class quan_Conv2d(nn.Conv2d):
                  padding=0,
                  dilation=1,
                  groups=1,
-                 bias=True):
+                 bias=True,
+                 bypass=False):
         super(quan_Conv2d, self).__init__(in_channels,
                                           out_channels,
                                           kernel_size,
@@ -63,6 +64,8 @@ class quan_Conv2d(nn.Conv2d):
                                 requires_grad=False)
 
         self.b_w[0] = -self.b_w[0]  #in-place change MSB to negative
+
+        self.bypass = bypass
 
     def forward(self, input):
         if self.inf_with_weight:
@@ -95,7 +98,7 @@ class quan_Conv2d(nn.Conv2d):
 
 
 class quan_Linear(nn.Linear):
-    def __init__(self, in_features, out_features, bias=True):
+    def __init__(self, in_features, out_features, bias=True, bypass=False):
         super(quan_Linear, self).__init__(in_features, out_features, bias=bias)
 
         self.N_bits = 8
@@ -114,6 +117,8 @@ class quan_Linear(nn.Linear):
                                 requires_grad=False)
 
         self.b_w[0] = -self.b_w[0]  #in-place reverse
+
+        self.bypass = bypass
 
     def forward(self, input):
         if self.inf_with_weight:

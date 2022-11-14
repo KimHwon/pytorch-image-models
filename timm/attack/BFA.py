@@ -26,6 +26,8 @@ class BFA(object):
         self.module_list = []
         for name, m in model.named_modules():
             if isinstance(m, quan_Conv2d) or isinstance(m, quan_Linear):
+                if m.bypass:
+                    continue
                 self.module_list.append(name)
 
     def flip_bit(self, m):
@@ -109,6 +111,8 @@ class BFA(object):
             # 2. zero out the grads first, then get the grads
             for m in model.modules():
                 if isinstance(m, quan_Conv2d) or isinstance(m, quan_Linear):
+                    if m.bypass:
+                        continue
                     if m.weight.grad is not None:
                         m.weight.grad.data.zero_()
 
@@ -122,8 +126,9 @@ class BFA(object):
                 self.n_bits2flip += 1
                 # iterate all the quantized conv and linear layer
                 for name, module in model.named_modules():
-                    if isinstance(module, quan_Conv2d) or isinstance(
-                            module, quan_Linear):
+                    if isinstance(module, quan_Conv2d) or isinstance(module, quan_Linear):
+                        if module.bypass:
+                            continue
                         clean_weight = module.weight.data.detach()
                         attack_weight = self.flip_bit(module)
                         # change the weight to attacked weight and get loss
